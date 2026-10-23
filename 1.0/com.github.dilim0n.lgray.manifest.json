@@ -9,7 +9,8 @@
   "rootRequired": true,
   "ipkUrl": "https://github.com/Dilim0n/LGRay/releases/download/v1.0.0/com.github.dilim0n.lgray_1.0.0_all.ipk",
   "ipkHash": {
-    "sha256": "34070f720c140d93516054818914cdd5f8b785d0ac8a1d05859a1c264d517467"
+    "sha256": "d5da3f86f396b7c96e73401748166a6f405847adc10d8b3f1f42c7c9be60b9fc"
   },
-  "ipkSize": 321162
+  "ipkSize": 13470070,
+  "installedSize": 36000000
 }

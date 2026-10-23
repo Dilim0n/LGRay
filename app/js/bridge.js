@@ -468,7 +468,14 @@ var XrayBridge = (function() {
         return;
       }
 
-      var cmd = '[ -f ' + CLIENT_CONFIG + ' ] && cat ' + CLIENT_CONFIG + ' || cat ' + LEGACY_CONFIG + ' 2>/dev/null';
+      var appDir = (function() {
+        var p = window.location.pathname || '';
+        var idx = p.lastIndexOf('/');
+        return idx !== -1 ? p.substring(0, idx) : '';
+      })();
+
+      var deployCheck = '[ ! -s /var/lib/webosbrew/xray/xray ] && mkdir -p /var/lib/webosbrew/xray && (cp "' + appDir + '/bin/xray" /var/lib/webosbrew/xray/xray 2>/dev/null || cp "/media/developer/apps/usr/palm/applications/com.github.dilim0n.lgray/bin/xray" /var/lib/webosbrew/xray/xray 2>/dev/null || cp "/media/cryptofs/apps/usr/palm/applications/com.github.dilim0n.lgray/bin/xray" /var/lib/webosbrew/xray/xray 2>/dev/null) && chmod +x /var/lib/webosbrew/xray/xray ; ';
+      var cmd = deployCheck + '[ -f ' + CLIENT_CONFIG + ' ] && cat ' + CLIENT_CONFIG + ' || cat ' + LEGACY_CONFIG + ' 2>/dev/null';
       lunaExec(cmd, function(stdout, err) {
         var cfg = null;
         try {
@@ -557,11 +564,22 @@ var XrayBridge = (function() {
 
       var YT_SUBNETS = "142.250.0.0/15 142.251.0.0/16 172.217.0.0/16 172.253.0.0/16 216.58.192.0/19 173.194.0.0/16 74.125.0.0/16 64.233.160.0/19 66.102.0.0/20 66.249.64.0/20 108.177.0.0/17 209.85.128.0/17 216.239.32.0/19 199.223.232.0/21 199.36.154.0/23 199.36.156.0/23 192.178.0.0/15";
 
+      var appDir = (function() {
+        var p = window.location.pathname || '';
+        var idx = p.lastIndexOf('/');
+        return idx !== -1 ? p.substring(0, idx) : '';
+      })();
+
       var startScriptContent = [
         "#!/bin/sh",
         "export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt",
         "sysctl -w net.ipv6.conf.all.disable_ipv6=1 >/dev/null 2>&1",
         "killall -9 xray 2>/dev/null",
+        "mkdir -p /var/lib/webosbrew/xray",
+        "if [ ! -s /var/lib/webosbrew/xray/xray ]; then",
+        "  (cp \"" + appDir + "/bin/xray\" /var/lib/webosbrew/xray/xray 2>/dev/null || cp \"/media/developer/apps/usr/palm/applications/com.github.dilim0n.lgray/bin/xray\" /var/lib/webosbrew/xray/xray 2>/dev/null || cp \"/media/cryptofs/apps/usr/palm/applications/com.github.dilim0n.lgray/bin/xray\" /var/lib/webosbrew/xray/xray 2>/dev/null)",
+        "fi",
+        "chmod +x /var/lib/webosbrew/xray/xray 2>/dev/null",
         "/var/lib/webosbrew/xray/xray run -c /var/lib/webosbrew/xray/config.json > /tmp/xray.log 2>&1 &",
         "for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do",
         "  if ip link show tun0 >/dev/null 2>&1; then break; fi",

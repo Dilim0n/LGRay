@@ -40,9 +40,9 @@ Version: {VERSION}
 Section: misc
 Priority: optional
 Architecture: all
-Maintainer: WebOSBrew Community
+Maintainer: Dilim0n
 Description: {TITLE} for LG webOS TV
-Installed-Size: 1048576
+Installed-Size: 36000000
 webOS-Package-Format-Version: 2
 """.encode('utf-8')
 
@@ -74,6 +74,19 @@ with tarfile.open(fileobj=data_buf, mode='w:gz') as tar:
             ti.mtime = int(time.time())
             ti.mode = 0o644
             tar.addfile(ti, io.BytesIO(content))
+
+    # Bundle Xray core binary if available
+    xray_source = os.path.join(ROOT_DIR, 'scripts', 'xray')
+    if os.path.exists(xray_source):
+        bin_dest = f"{app_base_dest}/bin/xray"
+        with open(xray_source, 'rb') as fp:
+            xray_content = fp.read()
+        ti = tarfile.TarInfo(name=bin_dest)
+        ti.size = len(xray_content)
+        ti.mtime = int(time.time())
+        ti.mode = 0o755
+        tar.addfile(ti, io.BytesIO(xray_content))
+        print(f"  -> Successfully bundled Xray-core ARM binary ({len(xray_content)} bytes) into {bin_dest}")
 
     # Packageinfo
     pkginfo_content = f'{{"id":"{APP_ID}","version":"{VERSION}","app":"{APP_ID}"}}\n'.encode('utf-8')
