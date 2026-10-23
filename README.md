@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-LG%20Smart%20TV-purple.svg)](#)
 
-**LGRay** — современный, быстрый и удобный X-Ray / VLESS клиент для **LG Smart TV** на базе **webOS** С ROOT Доступом).
+**LGRay** — современный, быстрый и удобный X-Ray / VLESS клиент для **LG Smart TV** на базе **webOS** (с root-доступом / Homebrew Channel).
 Работает на базе **Xray-core** (Linux ARMv7 / ARM64) с маршрутизацией через **TUN-интерфейс**, адаптивным интерфейсом для пультов LG Magic Remote и мгновенной передачей подписок со смартфона через QR-код.
 
 </div>
@@ -125,6 +125,13 @@ node scripts/relaunch-tv.js
 - Приложение **не содержит встроенных серверов или чужих ключей**.
 - Приватные подписки хранятся строго локально на вашем телевизоре в защищенной директории `/var/lib/webosbrew/xray/client_config.json`.
 - При передаче через QR-код сессия хранится в памяти Cloudflare KV не более 15 минут и удаляется сразу после получения телевизором.
+
+---
+
+## 🤝 Авторы и благодарности
+
+- **[Dilim0n](https://github.com/Dilim0n)** — автор идеи, дизайн, тестирование и разработка.
+- Разработано в формате парного программирования совместно с **Google DeepMind Antigravity**.
 
 ---
 
