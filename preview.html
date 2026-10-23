@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>LGRay Preview Initializer</title>
+</head>
+<body style="background: #000; color: #fff; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh;">
+  <p>Загрузка интерфейса LGRay...</p>
+  <script>
+    var demoNodes = [
+      {
+        id: "node-de-1",
+        name: "DE · Frankfurt am Main [High Speed]",
+        address: "194.87.12.34",
+        port: 443,
+        protocol: "vless",
+        network: "tcp",
+        flow: "xtls-rprx-vision",
+        security: "reality",
+        sni: "www.microsoft.com",
+        countryCode: "DE",
+        ping: 28
+      },
+      {
+        id: "node-nl-1",
+        name: "NL · Amsterdam [Streaming]",
+        address: "185.120.45.67",
+        port: 443,
+        protocol: "vless",
+        network: "tcp",
+        flow: "xtls-rprx-vision",
+        security: "reality",
+        sni: "dl.google.com",
+        countryCode: "NL",
+        ping: 34
+      },
+      {
+        id: "node-fi-1",
+        name: "FI · Helsinki [Direct]",
+        address: "95.216.78.90",
+        port: 443,
+        protocol: "vless",
+        network: "tcp",
+        flow: "xtls-rprx-vision",
+        security: "reality",
+        sni: "yahoo.com",
+        countryCode: "FI",
+        ping: 41
+      },
+      {
+        id: "node-se-1",
+        name: "SE · Stockholm [Low Latency]",
+        address: "193.180.22.11",
+        port: 443,
+        protocol: "vless",
+        network: "tcp",
+        flow: "xtls-rprx-vision",
+        security: "reality",
+        sni: "cloudflare.com",
+        countryCode: "SE",
+        ping: 46
+      },
+      {
+        id: "node-gb-1",
+        name: "GB · London [Ultra]",
+        address: "51.89.33.44",
+        port: 443,
+        protocol: "vless",
+        network: "tcp",
+        flow: "xtls-rprx-vision",
+        security: "reality",
+        sni: "apple.com",
+        countryCode: "GB",
+        ping: 52
+      },
+      {
+        id: "node-us-1",
+        name: "US · New York [US Content]",
+        address: "142.93.55.88",
+        port: 443,
+        protocol: "vless",
+        network: "tcp",
+        flow: "xtls-rprx-vision",
+        security: "reality",
+        sni: "speedtest.net",
+        countryCode: "US",
+        ping: 98
+      }
+    ];
+
+    var demoConfig = {
+      activeNodeId: "node-de-1",
+      activeSubscriptionId: "sub-1",
+      routeMode: "bypass_ru",
+      autostart: true,
+      disableIpv6: true,
+      dnsProvider: "cloudflare",
+      customDns: "1.1.1.1",
+      pingMode: "https",
+      theme: "oled",
+      lang: "ru",
+      subscriptionUrl: "https://example.com/api/v1/client/subscribe?token=demo",
+      subTitle: "Freedom Premium VIP",
+      subExpire: "2027-12-31",
+      autoUpdateInterval: "12",
+      lastSubUpdate: Date.now() - 3600000 * 4,
+      subscriptions: [
+        {
+          id: "sub-1",
+          name: "Freedom Premium VIP",
+          url: "https://example.com/api/v1/client/subscribe?token=demo",
+          expire: "2027-12-31",
+          totalNodes: 6,
+          updatedAt: Date.now() - 3600000 * 4,
+          active: true
+        }
+      ],
+      nodes: demoNodes
+    };
+
+    localStorage.setItem('xray_config', JSON.stringify(demoConfig));
+    localStorage.setItem('client_config', JSON.stringify(demoConfig));
+    localStorage.setItem('xray_running', 'true');
+    localStorage.setItem('lgray_was_running', 'true');
+    localStorage.setItem('xray_startTime', (Date.now() - 3600000 * 2.5).toString());
+    localStorage.setItem('lgray_theme', 'oled');
+    localStorage.setItem('lgray_lang', 'ru');
+
+    window.location.replace("app/index.html");
+  </script>
+</body>
+</html>
