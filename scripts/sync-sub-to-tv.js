@@ -112,9 +112,9 @@ https.get(subUrl, { headers: { 'User-Agent': 'X-ray/1.0.0 (webOS TV)' } }, res =
       s.write("cat << 'EOF' > /var/lib/webosbrew/xray/client_config.json\n" + JSON.stringify(cfg, null, 2) + "\nEOF\n");
       s.write("rm -f /var/lib/webosbrew/xray/happ_config.json\n");
       setTimeout(() => {
-        s.write("luna-send -n 1 luna://com.webos.applicationManager/close '{\"id\":\"org.webosbrew.xray\"}'\n");
+        s.write("luna-send -n 1 luna://com.webos.applicationManager/close '{\"id\":\"com.github.dilim0n.lgray\"}'\n");
         setTimeout(() => {
-          s.write("luna-send -n 1 luna://com.webos.applicationManager/launch '{\"id\":\"org.webosbrew.xray\"}'\n");
+          s.write("luna-send -n 1 luna://com.webos.applicationManager/launch '{\"id\":\"com.github.dilim0n.lgray\"}'\n");
           setTimeout(() => s.end(), 1500);
         }, 800);
       }, 1000);

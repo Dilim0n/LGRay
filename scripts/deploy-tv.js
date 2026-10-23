@@ -16,7 +16,7 @@ const HTTP_PORT = 8081;
 
 // Read application info
 const appinfoPath = path.join(__dirname, '..', 'app', 'appinfo.json');
-let appId = 'org.webosbrew.xray';
+let appId = 'com.github.dilim0n.lgray';
 let appVersion = '1.0.0';
 let appTitle = 'X-ray Client';
 

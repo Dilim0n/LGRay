@@ -79,7 +79,7 @@ node scripts/relaunch-tv.js
 
 ```
 ├── app/                        # webOS приложение (HTML5/JS/CSS)
-│   ├── appinfo.json            # Манифест приложения webOS (id: org.webosbrew.xray)
+│   ├── appinfo.json            # Манифест приложения webOS (id: com.github.dilim0n.lgray)
 │   ├── index.html              # Главный экран, дашборд и вкладки
 │   ├── assets/                 # Иконки, логотип и баннер
 │   │   ├── banner.png          # 16:9 промо-баннер приложения
@@ -94,7 +94,7 @@ node scripts/relaunch-tv.js
 │   ├── icon.png                # Иконка для лаунчера webOS (80x80)
 │   └── icon-large.png          # Крупная иконка лаунчера webOS (130x130)
 ├── dist/                       # Собранные установочные пакеты
-│   └── org.webosbrew.xray_1.0.0_all.ipk
+│   └── com.github.dilim0n.lgray_1.0.0_all.ipk
 ├── worker/                     # Облачный бэкенд синхронизации (Cloudflare Worker + KV)
 │   └── cloudflare-worker.js    # API сопряжения и передачи подписок по QR-коду
 ├── scripts/                    # Скрипты сборки и обслуживания

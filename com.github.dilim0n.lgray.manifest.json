@@ -1,0 +1,15 @@
+{
+  "id": "com.github.dilim0n.lgray",
+  "version": "1.0.0",
+  "type": "web",
+  "title": "LGRay",
+  "appDescription": "Modern Xray/VLESS/Reality VPN Client for LG webOS Smart TVs",
+  "iconUri": "https://raw.githubusercontent.com/Dilim0n/LGRay/main/app/icon-large.png",
+  "sourceUrl": "https://github.com/Dilim0n/LGRay",
+  "rootRequired": true,
+  "ipkUrl": "https://github.com/Dilim0n/LGRay/releases/download/v1.0.0/com.github.dilim0n.lgray_1.0.0_all.ipk",
+  "ipkHash": {
+    "sha256": "34070f720c140d93516054818914cdd5f8b785d0ac8a1d05859a1c264d517467"
+  },
+  "ipkSize": 321162
+}

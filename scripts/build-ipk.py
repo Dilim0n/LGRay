@@ -21,7 +21,7 @@ if os.path.exists(appinfo_path):
     with open(appinfo_path, 'r', encoding='utf-8') as f:
         appinfo = json.load(f)
 
-APP_ID = appinfo.get('id', 'org.webosbrew.xray')
+APP_ID = appinfo.get('id', 'com.github.dilim0n.lgray')
 VERSION = appinfo.get('version', '1.0.0')
 TITLE = appinfo.get('title', 'X-ray Client')
 IPK_NAME = f"{APP_ID}_{VERSION}_all.ipk"

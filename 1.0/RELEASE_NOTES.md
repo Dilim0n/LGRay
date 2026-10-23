@@ -40,9 +40,9 @@
 
 ## 📦 Файлы релиза
 
-- **`org.webosbrew.xray_1.0.0_all.ipk`** — установочный пакет приложения для LG webOS Smart TV.
+- **`com.github.dilim0n.lgray_1.0.0_all.ipk`** — установочный пакет приложения для LG webOS Smart TV.
 
 ### Инструкция по установке:
 1. Установите [Homebrew Channel](https://github.com/webosbrew/webos-homebrew-channel) на телевизор.
-2. Установите скачанный файл `org.webosbrew.xray_1.0.0_all.ipk` через **Homebrew Channel -> Settings -> Install IPK** или через **webOS Dev Manager** на ПК.
+2. Установите скачанный файл `com.github.dilim0n.lgray_1.0.0_all.ipk` через **Homebrew Channel -> Settings -> Install IPK** или через **webOS Dev Manager** на ПК.
 3. Запустите **LGRay** из меню приложений вашего ТВ.
