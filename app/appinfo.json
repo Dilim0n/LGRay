@@ -1,0 +1,17 @@
+{
+  "id": "org.webosbrew.xray",
+  "version": "1.0.0",
+  "vendor": "WebOSBrew",
+  "type": "web",
+  "main": "index.html",
+  "title": "LGRay",
+  "icon": "icon.png",
+  "largeIcon": "icon-large.png",
+  "bgColor": "#0b0d14",
+  "iconColor": "#00f0ff",
+  "uiRevision": 2,
+  "supportGSSDK": false,
+  "disableBackHistoryAPI": true,
+  "handlesRelaunch": true,
+  "enableBackgroundRun": true
+}

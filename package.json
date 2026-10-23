@@ -1,0 +1,27 @@
+{
+  "name": "lgray",
+  "version": "1.0.0",
+  "description": "LGRay - Modern X-Ray / VLESS Reality Client for LG webOS TV (tun / VLESS Reality / Xray-core / QR Sync)",
+  "main": "app/index.html",
+  "scripts": {
+    "build": "python scripts/build-ipk.py",
+    "deploy": "node scripts/deploy-tv.js",
+    "relaunch": "node scripts/relaunch-tv.js"
+  },
+  "keywords": [
+    "lgray",
+    "webos",
+    "xray",
+    "x-ray",
+    "x-ray-client",
+    "vless",
+    "reality",
+    "xray-core",
+    "vpn",
+    "youtube",
+    "lg-tv",
+    "homebrew-channel"
+  ],
+  "author": "WebOSBrew Community",
+  "license": "MIT"
+}

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>LGRay - WebOS X-Ray Client</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // webOS remote Back key history trap
+    (function() {
+      try {
+        history.pushState({ page: 'root' }, '', '');
+        window.addEventListener('popstate', function(e) {
+          try { history.pushState({ page: 'root' }, '', ''); } catch (err) {}
+          var qrModal = document.getElementById('qr-modal');
+          if (qrModal && qrModal.style.display !== 'none') {
+            if (typeof window.closeQrModal === 'function') {
+              window.closeQrModal();
+            }
+          }
+        });
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="theme-dark">
+  <div class="app-layout">
+    <!-- Left Navigation Rail -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="assets/logo.png" class="brand-img" alt="LGRay" />
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">LGRay</span>
+          <span class="brand-subtitle">WebOS X-Ray Client</span>
+        </div>
+      </div>
+
+      <!-- Tab Buttons: 1. Dashboard, 2. Servers, 3. Subscriptions, 4. Routing, 5. Settings, 6. Logs -->
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-tab="tab-dashboard" data-nav="nav">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" class="svg-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_dashboard">Подключение</span>
+        </button>
+
+        <button class="nav-btn" data-tab="tab-servers" data-nav="nav">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" class="svg-icon"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_servers">Серверы</span>
+          <span class="badge" id="servers-count-badge">0</span>
+        </button>
+
+        <button class="nav-btn" data-tab="tab-subs" data-nav="nav">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" class="svg-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_subs">Подписки</span>
+          <span class="badge" id="subs-count-nav-badge">0</span>
+        </button>
+
+        <button class="nav-btn" data-tab="tab-routing" data-nav="nav">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" class="svg-icon"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_routing">Маршрутизация</span>
+        </button>
+
+        <button class="nav-btn" data-tab="tab-settings" data-nav="nav">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" class="svg-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_settings">Настройки</span>
+        </button>
+
+        <button class="nav-btn" data-tab="tab-logs" data-nav="nav">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" class="svg-icon"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </span>
+          <span class="nav-label" data-i18n="nav_logs">Журнал</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-indicator">
+          <div class="status-dot" id="system-status-dot"></div>
+          <span class="status-text" id="system-status-text" data-i18n="status_ready">Готов к работе</span>
+        </div>
+        <div class="core-badge">Xray-core v26 (TUN)</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <!-- Top Status Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <h1 class="page-title" id="page-title" data-i18n="title_dashboard">Подключение</h1>
+        </div>
+        <div class="header-right">
+          <div class="node-pill" id="header-node-pill">
+            <span class="node-flag country-badge" id="header-node-flag">--</span>
+            <span class="node-name" id="header-node-name" data-i18n="no_server_selected">Сервер не выбран</span>
+            <span class="node-ping" id="header-node-ping">-- ms</span>
+          </div>
+          <div class="mode-pill" id="header-mode-pill" data-i18n="mode_bypass_ru">Обход РФ</div>
+        </div>
+      </header>
+
+      <!-- TAB 1: DASHBOARD (Connection - Default Open on Startup) -->
+      <section class="tab-page active" id="tab-dashboard">
+        <div class="dashboard-grid">
+          <!-- Hero Power Button Card -->
+          <div class="hero-card">
+            <div class="power-toggle-container">
+              <button class="power-btn" id="main-power-btn" data-nav="dash" tabindex="0">
+                <div class="power-ring"></div>
+                <div class="power-inner">
+                  <svg viewBox="0 0 24 24" class="power-icon">
+                    <path d="M12 2v10M18.36 5.64a9 9 0 1 1-12.73 0" />
+                  </svg>
+                  <span class="power-label" id="power-btn-label" data-i18n="btn_connect">ПОДКЛЮЧИТЬ</span>
+                </div>
+              </button>
+            </div>
+            <div class="connection-status-label" id="connection-state-text" data-i18n="state_disconnected">ОТКЛЮЧЕНО</div>
+            <div class="connection-hint" data-i18n="conn_hint">Нажмите клавишу OK для управления туннелем</div>
+          </div>
+
+          <!-- Active Server & Quick Controls -->
+          <div class="dashboard-side-col">
+            <!-- Active Node Card -->
+            <div class="card active-node-card">
+              <div class="card-header">
+                <span class="card-title" data-i18n="active_server_title">АКТИВНЫЙ СЕРВЕР</span>
+                <button class="btn btn-sm btn-ghost" id="dash-switch-server-btn" data-nav="dash" tabindex="0">
+                  <span data-i18n="btn_change_server">Сменить сервер</span>
+                  <svg class="icon-inline" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </div>
+              <div class="node-hero-content">
+                <div class="node-hero-flag country-badge" id="dash-node-flag">--</div>
+                <div class="node-hero-details">
+                  <div class="node-hero-name" id="dash-node-name" data-i18n="no_server_selected">Сервер не выбран</div>
+                  <div class="node-hero-sub">
+                    <span class="badge badge-cyan">VLESS Reality</span>
+                    <span class="badge badge-purple" id="dash-node-flow">--</span>
+                    <span class="node-ping-badge" id="dash-node-ping">-- ms</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-icon text-cyan">
+                  <svg viewBox="0 0 24 24" class="svg-icon"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-val" id="stat-latency">-- ms</span>
+                  <span class="stat-lbl" data-i18n="stat_latency">Задержка</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon text-purple">
+                  <svg viewBox="0 0 24 24" class="svg-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-val" id="stat-mode" data-i18n="mode_bypass_ru">Обход РФ</span>
+                  <span class="stat-lbl" data-i18n="stat_routing">Маршрутизация</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon text-blue">
+                  <svg viewBox="0 0 24 24" class="svg-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="stat-info">
+                  <span class="stat-val" id="stat-uptime">00:00:00</span>
+                  <span class="stat-lbl" data-i18n="stat_session_time">Время сессии</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Card -->
+            <div class="quick-actions-card">
+              <button class="btn btn-primary btn-lg" id="dash-test-conn-btn" data-nav="dash" tabindex="0">
+                <svg viewBox="0 0 24 24" class="btn-svg"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                <span data-i18n="btn_test_conn">Проверить соединение</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SERVERS -->
+      <section class="tab-page" id="tab-servers">
+        <!-- Compact Information Header of Active Subscription -->
+        <div class="servers-sub-banner">
+          <div class="sub-banner-left">
+            <div class="sub-banner-meta">
+              <span class="sub-status-pill active" id="servers-sub-status" data-i18n="sub_status_active">Активна</span>
+              <span class="badge badge-purple" id="servers-count-pill">0 узлов</span>
+            </div>
+            <h2 class="sub-banner-name" id="servers-sub-name">Название подписки</h2>
+            <div class="sub-banner-exp">
+              <span data-i18n="valid_until">Действует до:</span>
+              <span class="text-cyan" id="servers-sub-expire">--.--.----</span>
+            </div>
+          </div>
+          <div class="sub-banner-actions">
+            <button class="btn btn-secondary sub-action-btn" id="servers-refresh-sub-btn" data-nav="servers" tabindex="0">
+              <svg viewBox="0 0 24 24" class="btn-svg"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span data-i18n="btn_refresh_sub">Обновить подписку</span>
+            </button>
+            <button class="btn btn-secondary sub-action-btn" id="ping-all-btn" data-nav="servers" tabindex="0">
+              <svg viewBox="0 0 24 24" class="btn-svg"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span data-i18n="btn_ping_all">Замер задержки всех</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Servers Adaptive Grid -->
+        <div class="servers-grid" id="servers-container">
+          <!-- Server cards injected by JS -->
+        </div>
+      </section>
+
+      <!-- TAB 3: SUBSCRIPTIONS (Dedicated Management) -->
+      <section class="tab-page" id="tab-subs">
+        <div class="subs-view-wrapper">
+          <!-- Add New Subscription Card -->
+          <div class="card add-sub-box">
+            <h3 class="settings-group-title" style="margin-bottom: 16px;" data-i18n="add_sub_title">Добавить новую подписку</h3>
+            <div class="add-sub-row">
+              <div class="add-sub-input-wrap">
+                <input type="text" class="form-input" id="sub-add-url-input" placeholder="https://..." spellcheck="false" data-nav="subs" tabindex="0" data-i18n-placeholder="add_sub_placeholder">
+              </div>
+              <button class="btn btn-primary" id="btn-add-sub" data-nav="subs" tabindex="0">
+                <svg viewBox="0 0 24 24" class="btn-svg"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span data-i18n="btn_add_sub">Добавить подписку</span>
+              </button>
+              <button class="btn btn-secondary" id="btn-qr-sync" data-nav="subs" tabindex="0">
+                <svg viewBox="0 0 24 24" class="btn-svg"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Импорт по QR</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subscriptions List Section -->
+          <div class="subs-list-header">
+            <span class="toolbar-title" data-i18n="your_subs_title">Ваши подписки</span>
+            <span class="badge" id="subs-count-badge">0</span>
+          </div>
+
+          <div class="subs-cards-container" id="subs-list-container">
+            <!-- Subscription Cards injected by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: ROUTING -->
+      <section class="tab-page" id="tab-routing">
+        <div class="routing-options-grid">
+          <div class="routing-card active" data-mode="bypass_ru" data-nav="routing" tabindex="0">
+            <div class="routing-radio"></div>
+            <div class="routing-indicator ind-green"></div>
+            <h3 class="routing-title" data-i18n="route_bypass_title">Обход блокировок (Рекомендуется)</h3>
+            <p class="routing-desc" data-i18n="route_bypass_desc">Российские сервисы (Кинопоиск, Иви, Wink, Госуслуги, Сбер, сайты .RU) идут напрямую без задержек. Заблокированные ресурсы, YouTube, Instagram, X идут через VPN.</p>
+            <div class="routing-badge" data-i18n="route_bypass_badge">Умный туннель</div>
+          </div>
+
+          <div class="routing-card" data-mode="youtube_only" data-nav="routing" tabindex="0">
+            <div class="routing-radio"></div>
+            <div class="routing-indicator ind-blue"></div>
+            <h3 class="routing-title" data-i18n="route_yt_title">Только YouTube и Google</h3>
+            <p class="routing-desc" data-i18n="route_yt_desc">Максимальная производительность для видео. В туннель направляются исключительно IP-подсети Google и YouTube. Все остальные сайты работают напрямую.</p>
+            <div class="routing-badge" data-i18n="route_yt_badge">Турбо-видео</div>
+          </div>
+
+          <div class="routing-card" data-mode="global" data-nav="routing" tabindex="0">
+            <div class="routing-radio"></div>
+            <div class="routing-indicator ind-purple"></div>
+            <h3 class="routing-title" data-i18n="route_global_title">Полный VPN (Global Proxy)</h3>
+            <p class="routing-desc" data-i18n="route_global_desc">Весь интернет-трафик операционной системы телевизора и приложений направляется через выбранный сервер X-ray.</p>
+            <div class="routing-badge" data-i18n="route_global_badge">Полная анонимность</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: SETTINGS -->
+      <section class="tab-page" id="tab-settings">
+        <div class="settings-grid">
+          <!-- Appearance & Language Card -->
+          <div class="card settings-card">
+            <h3 class="settings-group-title" data-i18n="settings_group_appearance">Внешний вид и язык</h3>
+
+            <!-- Theme Selector -->
+            <div class="setting-item" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_theme_name">Тема интерфейса</span>
+                <span class="setting-hint" data-i18n="setting_theme_hint">Стиль оформления и цветовая схема</span>
+              </div>
+              <div class="setting-control" id="theme-controls">
+                <button class="btn btn-sm btn-secondary active" id="theme-btn-dark" data-theme="dark" data-nav="settings" tabindex="0" data-i18n="theme_dark">Темная</button>
+                <button class="btn btn-sm btn-secondary" id="theme-btn-light" data-theme="light" data-nav="settings" tabindex="0" data-i18n="theme_light">Светлая</button>
+                <button class="btn btn-sm btn-secondary" id="theme-btn-oled" data-theme="oled" data-nav="settings" tabindex="0" data-i18n="theme_oled">OLED (Черная)</button>
+              </div>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="setting-item" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_lang_name">Язык интерфейса</span>
+                <span class="setting-hint" data-i18n="setting_lang_hint">Выберите язык отображения приложения</span>
+              </div>
+              <div class="setting-control" id="lang-controls">
+                <button class="btn btn-sm btn-secondary active" id="lang-btn-ru" data-lang="ru" data-nav="settings" tabindex="0" data-i18n="lang_ru">Русский</button>
+                <button class="btn btn-sm btn-secondary" id="lang-btn-en" data-lang="en" data-nav="settings" tabindex="0" data-i18n="lang_en">English</button>
+                <button class="btn btn-sm btn-secondary" id="lang-btn-zh" data-lang="zh" data-nav="settings" tabindex="0" data-i18n="lang_zh">中文 (ZH)</button>
+              </div>
+            </div>
+
+            <h3 class="settings-group-title" style="margin-top: 24px;" data-i18n="settings_group_network">Параметры запуска и сети</h3>
+
+            <div class="setting-item setting-item-toggle" id="row-setting-autostart" tabindex="0" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_autostart_name">Автозапуск при включении телевизора</span>
+                <span class="setting-hint" data-i18n="setting_autostart_hint">Автоматически запускать службу Xray и поднимать туннель tun0 при старте webOS</span>
+              </div>
+              <label class="toggle-switch" tabindex="0" id="label-setting-autostart">
+                <input type="checkbox" id="setting-autostart" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item setting-item-toggle" id="row-setting-disable-ipv6" tabindex="0" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_ipv6_name">Блокировка IPv6</span>
+                <span class="setting-hint" data-i18n="setting_ipv6_hint">Предотвращает утечки DNS и зависания YouTube на сетях без нативной поддержки IPv6</span>
+              </div>
+              <label class="toggle-switch" tabindex="0" id="label-setting-disable-ipv6">
+                <input type="checkbox" id="setting-disable-ipv6" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_dns_name">DNS-провайдер</span>
+                <span class="setting-hint" data-i18n="setting_dns_hint">Безопасный DNS для резолва доменов в туннеле</span>
+              </div>
+              <div class="setting-control" id="dns-provider-controls">
+                <button class="btn btn-sm btn-secondary" id="dns-sub" data-nav="settings" tabindex="0" data-i18n="dns_sub_btn">Из подписки</button>
+                <button class="btn btn-sm btn-secondary active" id="dns-cloudflare" data-nav="settings" tabindex="0">Cloudflare (1.1.1.1)</button>
+                <button class="btn btn-sm btn-secondary" id="dns-google" data-nav="settings" tabindex="0">Google (8.8.8.8)</button>
+                <button class="btn btn-sm btn-secondary" id="dns-custom" data-nav="settings" tabindex="0" data-i18n="dns_custom_btn">Свой DNS</button>
+              </div>
+            </div>
+
+            <div class="setting-item" id="setting-custom-dns-row" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_custom_dns_name">Пользовательский DNS-сервер</span>
+                <span class="setting-hint" data-i18n="setting_custom_dns_hint">IP-адрес DNS (например, 77.88.8.8, 1.1.1.1, 8.8.8.8, 9.9.9.9)</span>
+              </div>
+              <div class="setting-control">
+                <input type="text" class="form-input form-input-dns" id="setting-custom-dns" placeholder="77.88.8.8" spellcheck="false" data-nav="settings" tabindex="0">
+              </div>
+            </div>
+
+            <div class="setting-item" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_ping_name">Режим проверки пинга</span>
+                <span class="setting-hint" data-i18n="setting_ping_hint">Способ измерения задержки: TCP к порту сервера или реальный HTTPS-запрос</span>
+              </div>
+              <div class="setting-control">
+                <button class="btn btn-sm btn-secondary" id="ping-mode-tcp" data-nav="settings" tabindex="0" data-i18n="ping_tcp_btn">Пинг по TCP (к порту)</button>
+                <button class="btn btn-sm btn-secondary active" id="ping-mode-https" data-nav="settings" tabindex="0" data-i18n="ping_https_btn">Пинг по HTTPS (запрос)</button>
+              </div>
+            </div>
+
+            <div class="setting-item" data-nav="settings">
+              <div class="setting-info">
+                <span class="setting-name" data-i18n="setting_autoupdate_name">Автообновление подписки</span>
+                <span class="setting-hint" id="setting-autoupdate-hint" data-i18n="setting_autoupdate_hint">Период фоновой синхронизации списка серверов</span>
+              </div>
+              <div class="setting-control" id="autoupdate-controls">
+                <button class="btn btn-sm btn-secondary" id="sub-interval-1" data-interval="1" data-nav="settings" tabindex="0" data-i18n="interval_1h">Каждый 1 ч</button>
+                <button class="btn btn-sm btn-secondary" id="sub-interval-3" data-interval="3" data-nav="settings" tabindex="0" data-i18n="interval_3h">Каждые 3 ч</button>
+                <button class="btn btn-sm btn-secondary" id="sub-interval-6" data-interval="6" data-nav="settings" tabindex="0" data-i18n="interval_6h">Каждые 6 ч</button>
+                <button class="btn btn-sm btn-secondary active" id="sub-interval-12" data-interval="12" data-nav="settings" tabindex="0" data-i18n="interval_12h">Каждые 12 ч</button>
+                <button class="btn btn-sm btn-secondary" id="sub-interval-24" data-interval="24" data-nav="settings" tabindex="0" data-i18n="interval_24h">Каждые 24 ч</button>
+                <button class="btn btn-sm btn-secondary" id="sub-interval-0" data-interval="0" data-nav="settings" tabindex="0" data-i18n="interval_manual">Только вручную</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Info Card -->
+          <div class="card settings-card">
+            <h3 class="settings-group-title" data-i18n="settings_group_system">О системе</h3>
+            <div class="system-info-list">
+              <div class="sys-info-row">
+                <span data-i18n="sys_app_version">Версия приложения:</span>
+                <span class="text-white">LGRay v1.0.0</span>
+              </div>
+              <div class="sys-info-row">
+                <span data-i18n="sys_core_version">Ядро прокси:</span>
+                <span class="text-cyan">Xray-core v26.10.21 (ARMv7 Linux)</span>
+              </div>
+              <div class="sys-info-row">
+                <span data-i18n="sys_net_iface">Сетевой интерфейс:</span>
+                <span class="text-green">tun0 (gVisor Netstack)</span>
+              </div>
+              <div class="sys-info-row">
+                <span data-i18n="sys_tv_control">Управление ТВ:</span>
+                <span class="text-white">Homebrew Channel Elevated Bridge</span>
+              </div>
+            </div>
+            <div style="margin-top: 24px;">
+              <button class="btn btn-secondary" id="btn-restart-core" data-nav="settings" tabindex="0">
+                <svg viewBox="0 0 24 24" class="btn-svg"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                <span data-i18n="btn_restart_service">Перезапустить службу Xray</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: LOGS -->
+      <section class="tab-page" id="tab-logs">
+        <div class="logs-toolbar">
+          <div class="logs-toolbar-title" data-i18n="logs_title">Журнал работы ядра Xray</div>
+          <div class="logs-toolbar-actions">
+            <button class="btn btn-sm btn-secondary" id="btn-refresh-logs" data-nav="logs" tabindex="0" data-i18n="btn_refresh_logs">Обновить</button>
+            <button class="btn btn-sm btn-secondary" id="btn-clear-logs" data-nav="logs" tabindex="0" data-i18n="btn_clear_logs">Очистить</button>
+          </div>
+        </div>
+        <div class="terminal-container">
+          <pre class="terminal-output" id="logs-terminal" tabindex="0" data-i18n="logs_loading">Загрузка журнала...</pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Remote Quick Shortcuts Bar -->
+  <div class="remote-shortcuts-bar">
+    <div class="shortcut-item">
+      <span class="shortcut-dot dot-red">● 1</span>
+      <span class="shortcut-text" data-i18n="shortcut_power">Вкл/Выкл VPN</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-dot dot-green">●● 2</span>
+      <span class="shortcut-text" data-i18n="shortcut_ping">Тест задержки</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-dot dot-yellow">●●● 3</span>
+      <span class="shortcut-text" data-i18n="shortcut_servers">Серверы</span>
+    </div>
+    <div class="shortcut-item">
+      <span class="shortcut-dot dot-blue">●●●● 4</span>
+      <span class="shortcut-text" data-i18n="shortcut_settings">Настройки</span>
+    </div>
+  </div>
+
+  <!-- QR Import Modal Dialog -->
+  <div class="qr-modal-backdrop" id="qr-modal" style="display: none;">
+    <div class="qr-modal-content">
+      <div class="qr-modal-header">
+        <h3>Импорт подписки со смартфона</h3>
+        <button class="btn btn-sm btn-ghost" id="btn-close-qr" tabindex="0">✕ Закрыть</button>
+      </div>
+      <div class="qr-modal-body">
+        <div class="qr-code-frame" id="qr-code-container">
+          <img id="qr-code-img" src="" alt="QR Code" />
+        </div>
+        <div class="qr-code-info">
+          <div class="qr-step-title">1. Наведите камеру телефона на QR-код</div>
+          <div class="qr-url-text">Или откройте в браузере: <span class="text-cyan">api-lgray.dilim0n.ru</span></div>
+          <div class="qr-code-badge">
+            <span class="qr-code-lbl">КОД:</span>
+            <span class="qr-code-val" id="qr-pairing-code">-----</span>
+          </div>
+          <div class="qr-status-text" id="qr-status-msg">Ожидание передачи со смартфона...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast-message"></div>
+
+  <script src="js/bridge.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/spatial-nav.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

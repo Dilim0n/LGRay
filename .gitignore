@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Local & Private Configs (Do NOT commit personal subscriptions!)
+*.local.json
+subscription.local.json
+
+# Binaries
+scripts/xray*
+scripts/geo*.dat
+
+# Builds & Packages
+dist/
+*.ipk
+
+# Logs & Temp
+*.log
+npm-debug.log*
+temp/
+/tmp/
+
+# Tools
+.tools/
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini

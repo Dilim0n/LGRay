@@ -1,0 +1,5 @@
+{
+  "subscriptionUrl": "https://example.com/api/v1/client/subscribe?token=your_token_here",
+  "subTitle": "My VPN Subscription",
+  "notes": "Copy this file to subscription.local.json and put your real subscription URL"
+}
